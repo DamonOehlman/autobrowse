@@ -1,0 +1,23 @@
+{
+  "name": "autobrowse",
+  "version": "0.0.0",
+  "description": "Automate browser execution based on known browser executables (like browser-launcher, but not quite as clever)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DamonOehlman/autobrowse.git"
+  },
+  "keywords": [
+    "launcher",
+    "browser",
+    "automation"
+  ],
+  "author": "Damon Oehlman <damon.oehlman@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DamonOehlman/autobrowse/issues"
+  }
+}
