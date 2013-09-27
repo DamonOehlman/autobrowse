@@ -24,3 +24,25 @@ creating profiles, etc. So massive thanks to @substack and other
 ## Firefox Compatibility Layer
 
 This is the compatibility layer for firefox.
+
+## Option Packs
+
+Option Packs are used to modify browser functionality when being automated.
+
+In most cases an option pack is enabled by simply calling `autobrowse`
+making use of the options argument. For instance, the following is code that
+you might use to launch a url in firefox nightly with the `webrtc` option
+pack enabled.
+
+```js
+autobrowse('~/ff/nightly/firefox', 'http://google.com', { webrtc: true });
+```
+
+### Firefox
+
+#### webrtc
+
+Make firefox simpler to automate when working with WebRTC.  Specifically:
+
+- disable the permission dialog for media capture
+- enable the media source flag so we can load files for testing
