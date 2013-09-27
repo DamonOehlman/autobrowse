@@ -14,6 +14,13 @@ use cases, browser-launcher is probably a better choice.
 
 ### autobrowse(executable, url, opts?, callback)
 
+## Acknowledgements
+
+This module uses many tricks that
+[browser-launcher](https://github.com/substack/browser-launcher) does for
+creating profiles, etc. So massive thanks to @substack and other
+`browser-launcher` contributors for their efforts.
+
 ## Firefox Compatibility Layer
 
 This is the compatibility layer for firefox.

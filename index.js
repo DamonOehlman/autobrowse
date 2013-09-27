@@ -22,6 +22,13 @@ var adapters = [
 
   ### autobrowse(executable, url, opts?, callback)
 
+  ## Acknowledgements
+
+  This module uses many tricks that
+  [browser-launcher](https://github.com/substack/browser-launcher) does for
+  creating profiles, etc. So massive thanks to @substack and other
+  `browser-launcher` contributors for their efforts.
+
 **/
 module.exports = function(executable, url, opts, callback) {
   // get the adapter (first matching) that works for the specified executable
