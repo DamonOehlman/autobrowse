@@ -6,6 +6,7 @@ var spawn = require('child_process').spawn;
 var mkdirp = require('mkdirp');
 var path = require('path');
 var uuid = require('uuid');
+var automator = require('./automator');
 
 var executables = [
   'firefox',
@@ -51,7 +52,16 @@ exports.exec = function(executable, uri, opts, callback) {
       return callback(err);
     }
 
-    spawn(executable, ['-profile', profile, uri]);
+    // TODO: check the spawn was successful
+    callback(null, automator(
+      // spawn the process and pass to the automator
+      spawn(executable, ['-profile', profile, uri]),
+
+      // define what happens at cleanup
+      function() {
+        rimraf(profile);
+      }
+    ));
   });
 };
 
