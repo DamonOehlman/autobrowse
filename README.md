@@ -12,7 +12,15 @@ use cases, browser-launcher is probably a better choice.
 
 ## Reference
 
-### autobrowse(executable, url, opts?, callback)
+### autobrowse
+
+```js
+autobrowse(browserExecutable, url, opts?, callback?)
+```
+
+Launch the specified browser executable targeting the specified url.  The
+`opts` arg can be used to specify particular [option packs](#option-packs)
+that you wish to enable when running the browser.
 
 ## Acknowledgements
 
