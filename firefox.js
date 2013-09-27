@@ -1,8 +1,12 @@
 /* jshint node: true */
 'use strict';
 
+var fs = require('fs');
 var spawn = require('child_process').spawn;
+var mkdirp = require('mkdirp');
 var path = require('path');
+var uuid = require('uuid');
+
 var executables = [
   'firefox',
   'firefox-bin',
@@ -10,6 +14,8 @@ var executables = [
 ];
 
 var baselineProfile = [
+  [ 'browser.shell.checkDefaultBrowser', false ],
+
   [ 'browser.cache.disk.capacity', 0 ],
   [ 'browser.cache.disk.smart_size.enabled', false ],
   [ 'browser.cache.disk.smart_size.first_run', false ],
@@ -18,8 +24,7 @@ var baselineProfile = [
 
   // TODO: review update settings
   [ 'app.update.auto', false ],
-  [ 'app.update.enabled', false ],
-
+  [ 'app.update.enabled', false ]
 
   // TODO: support proxies
 ];
@@ -39,8 +44,59 @@ exports.supports = function(executable) {
 };
 
 //execution
-exports.exec = function(executable, url, opts, callback) {
+exports.exec = function(executable, uri, opts, callback) {
   // create a temporary profile for firefox
-  
-  console.log('it\'s firefox');
+  createProfile(opts, function(err, profile) {
+    if (err) {
+      return callback(err);
+    }
+
+    spawn(executable, ['-profile', profile, uri]);
+  });
 };
+
+function createProfile(opts, callback) {
+  var profileOpts = getProfileOpts(opts);
+  var profilePath = path.resolve(__dirname, '.profiles', uuid.v4());
+
+  // create a temporary directory for the profile
+  mkdirp(profilePath, function(err) {
+    if (err) {
+      return callback(err);
+    }
+
+    // write the file
+    fs.writeFile(
+      path.join(profilePath, 'user.js'),
+      profileOpts.join('\n'), 'utf8',
+      function(err) {
+        callback(err, profilePath);
+      }
+    );
+  });
+}
+
+function getProfileOpts(opts) {
+  var profileOpts = [].concat(baselineProfile);
+
+  // expand options
+  Object.keys(opts).forEach(function(key) {
+    var pack = optionPacks[key];
+
+    // if the option is a known option, then add to the profile opts
+    if (pack) {
+      // if this is an array, just add it on
+      if (Array.isArray(pack)) {
+        profileOpts = profileOpts.concat(pack);
+      }
+      // if it is a function, then generate passing the option value
+      else if (typeof pack == 'function') {
+        profileOpts = profileOpts.concat(pack(opts[key]));
+      }
+    }
+  });
+
+  return profileOpts.map(function(pairs) {
+    return 'user_pref("' + pairs[0] + '", ' + pairs[1] + ');';
+  });
+}

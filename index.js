@@ -23,10 +23,10 @@ var adapters = [
   ### autobrowse
 
   ```js
-  autobrowse(browserExecutable, url, opts?, callback?)
+  autobrowse(browserExecutable, uri, opts?, callback?)
   ```
 
-  Launch the specified browser executable targeting the specified url.  The
+  Launch the specified browser executable targeting the specified uri.  The
   `opts` arg can be used to specify particular [option packs](#option-packs)
   that you wish to enable when running the browser.
 
@@ -38,7 +38,7 @@ var adapters = [
   `browser-launcher` contributors for their efforts.
 
 **/
-module.exports = function(executable, url, opts, callback) {
+module.exports = function(executable, uri, opts, callback) {
   // get the adapter (first matching) that works for the specified executable
   var browser = adapters.filter(function(adapter) {
     return adapter.supports(executable);
@@ -56,5 +56,5 @@ module.exports = function(executable, url, opts, callback) {
   }
 
   // run the browser
-  return browser.exec(executable, url, opts, callback);
+  return browser.exec(executable, uri, opts, callback);
 };
