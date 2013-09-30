@@ -7,7 +7,7 @@
 **/
 function Automator(ps, cleanup) {
   if (! (this instanceof Automator)) {
-    return new Automator(ps);
+    return new Automator(ps, cleanup);
   }
 
   // save the process instance so we can kill it
@@ -27,16 +27,24 @@ module.exports = Automator;
   Placeholder cleanup method.
 
 **/
-Automator.prototype.cleanup = function() {
-
+Automator.prototype.cleanup = function(callback) {
+  callback();
 };
 
 /**
-  ### terminate()
+  ### kill()
 
   Close the process, run the cleanup method
   
 **/
-Automator.prototype.terminate = function() {
+Automator.prototype.kill = function(callback) {
+  var automator = this;
 
+  // once the created process has exited, cleanup
+  this.ps.once('exit', function() {
+    automator.cleanup(callback);
+  });
+
+  // send the kill signal
+  this.ps.kill();
 };

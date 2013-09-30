@@ -6,6 +6,7 @@ var spawn = require('child_process').spawn;
 var mkdirp = require('mkdirp');
 var path = require('path');
 var uuid = require('uuid');
+var rimraf = require('rimraf');
 var automator = require('./automator');
 
 var executables = [
@@ -59,8 +60,8 @@ exports.exec = function(executable, uri, opts, callback) {
       ps = spawn(executable, ['-profile', profile, uri]),
 
       // define what happens at cleanup
-      function() {
-        rimraf(profile);
+      function(cb) {
+        rimraf(profile, cb);
       }
     ));
 
