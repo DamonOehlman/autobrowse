@@ -48,20 +48,24 @@ exports.supports = function(executable) {
 exports.exec = function(executable, uri, opts, callback) {
   // create a temporary profile for firefox
   createProfile(opts, function(err, profile) {
+    var ps;
+
     if (err) {
       return callback(err);
     }
 
-    // TODO: check the spawn was successful
     callback(null, automator(
       // spawn the process and pass to the automator
-      spawn(executable, ['-profile', profile, uri]),
+      ps = spawn(executable, ['-profile', profile, uri]),
 
       // define what happens at cleanup
       function() {
         rimraf(profile);
       }
     ));
+
+    // handle the process erroring
+    ps.on('error', callback);
   });
 };
 
