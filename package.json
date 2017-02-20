@@ -22,8 +22,8 @@
     "url": "https://github.com/DamonOehlman/autobrowse/issues"
   },
   "dependencies": {
-    "uuid": "~1.4.1",
-    "mkdirp": "~0.3.5",
-    "rimraf": "~2.2.2"
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.0",
+    "uuid": "^3.0.1"
   }
 }
