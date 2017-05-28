@@ -1,3 +1,4 @@
+
 # autobrowse
 
 A simple browser automation helper, given you know where you want to run
@@ -7,6 +8,7 @@ what [browser-launcher](https://github.com/substack/browser-launcher) does).
 
 [![NPM](https://nodei.co/npm/autobrowse.png)](https://nodei.co/npm/autobrowse/)
 
+[![bitHound Score](https://www.bithound.io/github/DamonOehlman/autobrowse/badges/score.svg)](https://www.bithound.io/github/DamonOehlman/autobrowse) 
 
 ## Why?
 
@@ -19,7 +21,21 @@ use cases, browser-launcher is probably a better choice.
 ### autobrowse
 
 ```js
-autobrowse(browserExecutable, uri, opts?, callback?)
+autobrowse(browserName, uri, opts?, callback?)
+```
+
+## Example
+
+```js
+const autobrowse = require('autobrowse');
+
+autobrowse('firefox', 'http://www.google.com', (err, automator) => {
+  // close the browser after 10s
+  setTimeout(() => {
+    automator.kill();
+  }, 10e3);
+});
+
 ```
 
 Launch the specified browser executable targeting the specified uri.  The
@@ -73,7 +89,7 @@ Make firefox simpler to automate when working with WebRTC.  Specifically:
 
 ### MIT
 
-Copyright (c) 2013 Damon Oehlman <damon.oehlman@gmail.com>
+Copyright (c) 2017 Damon Oehlman <damon.oehlman@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
