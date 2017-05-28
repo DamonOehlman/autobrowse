@@ -1,5 +1,4 @@
-/* jshint node: true */
-'use strict';
+const debug = require('debug')('autobrowser:automater');
 
 /**
   ## Automator
@@ -38,13 +37,13 @@ Automator.prototype.cleanup = function(callback) {
   
 **/
 Automator.prototype.kill = function(callback) {
-  var automator = this;
+  if (!!this.cleanup) {
+    this.ps.once('exit', () => {
+      debug('browser process exited, cleaning up');
+      this.cleanup(callback || function() {});
+    });
+  }
 
-  // once the created process has exited, cleanup
-  this.ps.once('exit', function() {
-    automator.cleanup(callback);
-  });
-
-  // send the kill signal
+  debug('sending kill signal to browser');
   this.ps.kill();
 };

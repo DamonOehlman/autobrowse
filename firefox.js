@@ -1,18 +1,19 @@
 /* jshint node: true */
 'use strict';
 
-var fs = require('fs');
-var spawn = require('child_process').spawn;
-var mkdirp = require('mkdirp');
-var path = require('path');
-var uuid = require('uuid');
-var rimraf = require('rimraf');
-var automator = require('./automator');
+const fs = require('fs');
+const spawn = require('child_process').spawn;
+const mkdirp = require('mkdirp');
+const path = require('path');
+const debug = require('debug')('autobrowse:firefox');
+const uuid = require('uuid');
+const rimraf = require('rimraf');
+const automator = require('./automator');
 
-var executables = [
-  'firefox',
-  'firefox-bin',
-  'firefox.exe'
+const executables = [
+  '/usr/local/bin/firefox',
+  '/usr/local/bin/firefox-bin',
+  '/Applications/Firefox.app/Contents/MacOS/firefox-bin'
 ];
 
 var baselineProfile = [
@@ -41,12 +42,12 @@ var optionPacks = require('./option-packs/firefox');
 **/
 
 // detection
-exports.supports = function(executable) {
-  return executables.indexOf(path.basename(executable)) >= 0;
-};
+const getExecutable = () => executables.filter(file => fs.existsSync(file))[0];
 
 //execution
-exports.exec = function(executable, uri, opts, callback) {
+const exec = (uri, opts, callback) => {
+  const executable = getExecutable();
+
   // create a temporary profile for firefox
   createProfile(opts, function(err, profile) {
     var ps;
@@ -55,6 +56,7 @@ exports.exec = function(executable, uri, opts, callback) {
       return callback(err);
     }
 
+    debug('attempting to start ' + executable);
     callback(null, automator(
       // spawn the process and pass to the automator
       ps = spawn(executable, ['-profile', profile, uri]),
@@ -68,6 +70,11 @@ exports.exec = function(executable, uri, opts, callback) {
     // handle the process erroring
     ps.on('error', callback);
   });
+};
+
+module.exports = {
+  getExecutable,
+  exec
 };
 
 function createProfile(opts, callback) {
@@ -103,9 +110,7 @@ function getProfileOpts(opts) {
       // if this is an array, just add it on
       if (Array.isArray(pack)) {
         profileOpts = profileOpts.concat(pack);
-      }
-      // if it is a function, then generate passing the option value
-      else if (typeof pack == 'function') {
+      } else if (typeof pack == 'function') {
         profileOpts = profileOpts.concat(pack(opts[key]));
       }
     }
