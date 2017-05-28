@@ -1,7 +1,8 @@
 /* jshint node: true */
 'use strict';
 
-var adapters = [
+const debug = require('debug')('autobrowse');
+const adapters = [
   require('./firefox')
 ];
 
@@ -23,7 +24,7 @@ var adapters = [
   ### autobrowse
 
   ```js
-  autobrowse(browserExecutable, uri, opts?, callback?)
+  autobrowse(browserName, uri, opts?, callback?)
   ```
 
   Launch the specified browser executable targeting the specified uri.  The
@@ -38,14 +39,19 @@ var adapters = [
   `browser-launcher` contributors for their efforts.
 
 **/
-module.exports = function(executable, uri, opts, callback) {
+module.exports = function(browser, uri, opts, callback) {
   // get the adapter (first matching) that works for the specified executable
-  var browser = adapters.filter(function(adapter) {
-    return adapter.supports(executable);
+  const adapter = adapters.filter(adapter => {
+    return !!adapter.getExecutable();
   })[0];
 
-  // handle the no opts case
-  if (typeof opts == 'function') {
+  debug('found adapter for browser ' + browser);
+
+  // if we have not opts and no callback, then create a noop callback
+  if (opts === undefined) {
+    callback = function() {};
+    opts = {};
+  } else if (typeof opts == 'function') {
     callback = opts;
     opts = {};
   }
@@ -56,5 +62,5 @@ module.exports = function(executable, uri, opts, callback) {
   }
 
   // run the browser
-  return browser.exec(executable, uri, opts, callback);
+  return adapter.exec(uri, opts, callback);
 };
