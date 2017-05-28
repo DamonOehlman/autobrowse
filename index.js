@@ -27,6 +27,10 @@ const adapters = [
   autobrowse(browserName, uri, opts?, callback?)
   ```
 
+  ## Example
+
+  <<< examples/firefox.js
+
   Launch the specified browser executable targeting the specified uri.  The
   `opts` arg can be used to specify particular [option packs](#option-packs)
   that you wish to enable when running the browser.
