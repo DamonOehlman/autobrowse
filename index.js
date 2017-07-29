@@ -2,8 +2,10 @@
 'use strict';
 
 const debug = require('debug')('autobrowse');
+const { checkArgument } = require('conditional');
 const adapters = [
-  require('./firefox')
+  require('./firefox'),
+  require('./chrome')
 ];
 
 /**
@@ -44,24 +46,19 @@ const adapters = [
 
 **/
 module.exports = function(browser, uri, opts, callback) {
+  // check and create fallback arguments where appropriate
+  checkArgument(typeof browser == 'string', 'autobrowse browser argument must be a string');
+  checkArgument(typeof uri == 'string', 'autobrowse url argument must be a string');
+  checkArgument(typeof opts == 'object' || opts === null, 'autobrowse opts must be an object or null');
+  callback = callback || {};
+
   // get the adapter (first matching) that works for the specified executable
   const adapter = adapters.filter(adapter => {
     return !!adapter.getExecutable();
   })[0];
 
   debug('found adapter for browser ' + browser);
-
-  // if we have not opts and no callback, then create a noop callback
-  if (opts === undefined) {
-    callback = function() {};
-    opts = {};
-  } else if (typeof opts == 'function') {
-    callback = opts;
-    opts = {};
-  }
-
-  // if we have no matching browser adapter, then report the error
-  if (! browser) {
+  if (!browser) {
     return callback(new Error('Unable to find suitable adapter for browser executable: ' + executable));
   }
 
