@@ -6,5 +6,5 @@
 **/
 
  module.exports = [
-  [ 'enable-experimental-web-platform-features' ]
+  '--enable-experimental-web-platform-features'
 ];

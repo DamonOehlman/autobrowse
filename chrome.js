@@ -25,10 +25,17 @@ exports.exec = (uri, opts, callback) => {
     return memo.concat(optionPacks.get(key) || []);
   }, []);
 
-  const args = [
+  const args = additionalArgs.concat([
     '--no-first-run',
-    `--profile ${profileDir}`
-  ].concat(additionalArgs).concat([uri]);
+    '--no-default-browser-check',
+    '--disable-default-apps',
+    '--disable-sync',
+    '--disable-restore-session-state',
+    '--noerrdialogs',
+    '--enable-automation',
+    `--user-data-dir=${profileDir}`,
+    uri
+  ]);
 
   // create a temporary profile for firefox
   mkdirp(profileDir, (err) => {
@@ -36,6 +43,7 @@ exports.exec = (uri, opts, callback) => {
       return callback(err);
     }
 
+    // console.log(args);
     const ps = spawn(executable, args);
     debug(`created process for ${executable}, creating automator`, callback);
     callback(null, Automator.of(ps, () => rimraf(profileDir, () => {})));
