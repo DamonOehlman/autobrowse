@@ -24,7 +24,7 @@ const adapters = [
   ### autobrowse
 
   ```js
-  autobrowse(browserName, uri, opts?, callback?)
+  autobrowse(browserName, uri, opts, callback?)
   ```
 
   ## Example

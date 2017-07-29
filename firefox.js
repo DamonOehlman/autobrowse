@@ -99,11 +99,9 @@ function createProfile(opts, callback) {
 }
 
 function getProfileOpts(opts) {
-  var profileOpts = [].concat(baselineProfile);
-
-  // expand options
+  let profileOpts = [].concat(baselineProfile);
   Object.keys(opts).forEach(function(key) {
-    var pack = optionPacks[key];
+    const pack = optionPacks.get(key);
 
     // if the option is a known option, then add to the profile opts
     if (pack) {
@@ -116,7 +114,5 @@ function getProfileOpts(opts) {
     }
   });
 
-  return profileOpts.map(function(pairs) {
-    return 'user_pref("' + pairs[0] + '", ' + pairs[1] + ');';
-  });
+  return profileOpts.map(([key, value]) => `user_pref("${key}", ${value});`);
 }

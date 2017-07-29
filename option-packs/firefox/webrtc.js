@@ -5,7 +5,7 @@
 
   - disable the permission dialog for media capture
   - enable the media source flag so we can load files for testing
-  
+
 **/
 
  module.exports = [
