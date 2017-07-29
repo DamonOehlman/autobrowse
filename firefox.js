@@ -2,13 +2,13 @@
 'use strict';
 
 const fs = require('fs');
-const spawn = require('child_process').spawn;
+const { spawn } = require('child_process');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const debug = require('debug')('autobrowse:firefox');
 const uuid = require('uuid');
 const rimraf = require('rimraf');
-const automator = require('./automator');
+const Automator = require('./automator');
 
 const executables = [
   '/usr/local/bin/firefox',
@@ -49,26 +49,14 @@ const exec = (uri, opts, callback) => {
   const executable = getExecutable();
 
   // create a temporary profile for firefox
-  createProfile(opts, function(err, profile) {
-    var ps;
-
+  createProfile(opts, (err, profile) => {
     if (err) {
       return callback(err);
     }
 
-    debug('attempting to start ' + executable);
-    callback(null, automator(
-      // spawn the process and pass to the automator
-      ps = spawn(executable, ['-profile', profile, uri]),
-
-      // define what happens at cleanup
-      function(cb) {
-        rimraf(profile, cb);
-      }
-    ));
-
-    // handle the process erroring
-    ps.on('error', callback);
+    const ps = spawn(executable, ['-profile', profile, uri]);
+    debug(`created process for ${executable}, creating automator`, callback);
+    callback(null, Automator.of(ps, () => rimraf(profile, () => {})));
   });
 };
 
@@ -78,8 +66,8 @@ module.exports = {
 };
 
 function createProfile(opts, callback) {
-  var profileOpts = getProfileOpts(opts);
-  var profilePath = path.resolve(__dirname, '.profiles', uuid.v4());
+  const profileOpts = getProfileOpts(opts);
+  const profilePath = path.resolve(__dirname, '.profiles', uuid.v4());
 
   // create a temporary directory for the profile
   mkdirp(profilePath, function(err) {
@@ -91,9 +79,7 @@ function createProfile(opts, callback) {
     fs.writeFile(
       path.join(profilePath, 'user.js'),
       profileOpts.join('\n'), 'utf8',
-      function(err) {
-        callback(err, profilePath);
-      }
+      (err) => callback(err, profilePath)
     );
   });
 }
