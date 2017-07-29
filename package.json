@@ -1,6 +1,6 @@
 {
   "name": "autobrowse",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Automate browser execution based on known browser executables (like browser-launcher, but not quite as clever)",
   "main": "index.js",
   "scripts": {
