@@ -4,8 +4,9 @@
 const debug = require('debug')('autobrowse');
 const { checkArgument } = require('conditional');
 const adapters = [
-  require('./firefox'),
-  require('./chrome')
+  [ 'firefox', require('./firefox') ],
+  [ 'chrome', require('./chrome') ],
+  [ 'safari', require('./safari') ]
 ];
 
 /**
@@ -53,12 +54,12 @@ module.exports = function(browser, uri, opts, callback) {
   callback = callback || {};
 
   // get the adapter (first matching) that works for the specified executable
-  const adapter = adapters.filter(adapter => {
-    return !!adapter.getExecutable();
-  })[0];
+  const adapter = adapters.filter(([browserName, adapter]) => {
+    return browserName.toLowerCase() === browser.toLowerCase() && !!adapter.getExecutable();
+  }).map(([browserName, adapter]) => adapter)[0];
 
   debug('found adapter for browser ' + browser);
-  if (!browser) {
+  if (!adapter) {
     return callback(new Error('Unable to find suitable adapter for browser executable: ' + executable));
   }
 

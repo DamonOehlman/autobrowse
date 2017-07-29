@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const debug = require('debug')('autobrowse:chrome');
 const uuid = require('uuid');
 const rimraf = require('rimraf');
@@ -37,6 +38,6 @@ exports.exec = (uri, opts, callback) => {
 
     const ps = spawn(executable, args);
     debug(`created process for ${executable}, creating automator`, callback);
-    callback(null, Automator.of(ps, () => rimraf(profile, () => {})));
+    callback(null, Automator.of(ps, () => rimraf(profileDir, () => {})));
   });
 };
